@@ -106,12 +106,12 @@ func UsingNewThigns() {
 
 	producer1 := workers.NewProducer("producer")
 	delay1 := middleware.NewDelaying("delay 1", time.Microsecond*10)
-	delay2 := middleware.NewDelaying("delay 2", time.Millisecond*10)
+	mightBeBroken := middleware.NewIntermittentlyBroken("broken 1", "query", 50, fmt.Errorf("random error"))
 	endpoint := workers.NewEndpoint("endpoint")
 
 	in := producer1.Run(groupContext, time.Millisecond*10, func() string { return "ping" })
 	outDelay1 := delay1.Run(groupContext, in)
-	outDelay2 := delay2.Run(groupContext, outDelay1)
+	outDelay2 := mightBeBroken.Run(groupContext, outDelay1)
 	endpoint.Run(
 		groupContext,
 		func(mwc workers.MessageWithContext) { fmt.Println("pong") },
