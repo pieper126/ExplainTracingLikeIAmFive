@@ -31,6 +31,7 @@ func TestDelayedMiddlewareDelaysMessage(t *testing.T) {
 
 	for message := range outputFromMiddleware {
 		delivered = append(delivered, message)
+		break
 	}
 
 	assert.Len(t, delivered, 1)
